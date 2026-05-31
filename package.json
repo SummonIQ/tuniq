@@ -1,0 +1,27 @@
+{
+  "name": "tuniq",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "TUNIQ_RELAY_SHARED_SECRET=dev-local-shared-secret TUNIQ_APP_URL=http://localhost:10180 PUBLIC_BASE_DOMAIN=tuniq.dev bun --filter web dev & TUNIQ_RELAY_SHARED_SECRET=dev-local-shared-secret TUNIQ_APP_URL=http://localhost:10180 PUBLIC_BASE_DOMAIN=tuniq.dev bun --filter @tuniq/relay dev & VITE_TUNIQ_APP_URL=http://localhost:10180 VITE_TUNIQ_RELAY_URL=ws://localhost:10181/agent bun --filter desktop tauri dev & wait",
+    "dev:web": "bun --filter web dev",
+    "dev:desktop": "bun --filter desktop tauri dev",
+    "dev:relay": "bun --filter @tuniq/relay dev",
+    "build": "bun --filter web build && bun --filter @tuniq/relay build && bun --filter desktop build",
+    "build:web": "bun --filter web build",
+    "build:desktop": "bun --filter desktop build",
+    "build:relay": "bun --filter @tuniq/relay build",
+    "lint": "bun --filter web lint",
+    "prisma:generate": "bun --filter web prisma generate",
+    "prisma:migrate": "bun --filter web prisma migrate dev"
+  },
+  "trustedDependencies": [
+    "@prisma/client",
+    "prisma",
+    "sharp",
+    "unrs-resolver"
+  ]
+}

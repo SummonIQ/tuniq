@@ -1,0 +1,13 @@
+.git
+node_modules
+**/node_modules
+apps/desktop
+apps/relay/dist
+apps/**/dist
+apps/**/target
+**/*.dmg
+**/*.app
+!apps/web/public/downloads/**
+.env
+.env.*
+!.env.example

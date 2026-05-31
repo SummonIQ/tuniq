@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  emailVerified        Boolean   @default(false)
+  image                String?
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  stripePriceId        String?
+  stripeStatus         String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  domains              Domain[]
+  agents               Agent[]
+  sessions             Session[]
+  accounts             Account[]
+  transferUsagePeriods TransferUsagePeriod[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+}
+
+model Domain {
+  id                 String       @id @default(cuid())
+  ownerId            String
+  host               String       @unique
+  kind               DomainKind   @default(TUNIQ_SUBDOMAIN)
+  verificationStatus VerifyStatus @default(PENDING)
+  verificationToken  String       @unique
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  owner              User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  routes             Route[]
+
+  @@index([ownerId])
+}
+
+model Route {
+  id          String      @id @default(cuid())
+  domainId    String
+  agentId     String?
+  pathPrefix  String      @default("/")
+  targetPort  Int
+  accessTokenHash String?
+  accessTokenHint String?
+  timeoutMs   Int         @default(60000)
+  isEnabled   Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  domain      Domain      @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  agent       Agent?      @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  sessions    TunnelSession[]
+
+  @@unique([domainId, pathPrefix])
+  @@index([agentId])
+}
+
+model Agent {
+  id                    String          @id @default(cuid())
+  ownerId               String
+  name                  String
+  enrollmentTokenHash   String?         @unique
+  enrollmentTokenExpiry DateTime?
+  tokenHash             String?
+  platform              String?
+  version               String?
+  lastSeenAt            DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  owner                 User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  routes                Route[]
+  sessions              TunnelSession[]
+
+  @@index([ownerId])
+}
+
+model TunnelSession {
+  id        String        @id @default(cuid())
+  agentId   String
+  routeId   String?
+  status    SessionStatus @default(STARTING)
+  relayUrl  String
+  startedAt DateTime      @default(now())
+  endedAt   DateTime?
+  agent     Agent         @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  route     Route?        @relation(fields: [routeId], references: [id], onDelete: SetNull)
+
+  @@index([agentId, startedAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  metadata  Json
+  createdAt DateTime @default(now())
+}
+
+model TransferUsagePeriod {
+  id           String   @id @default(cuid())
+  ownerId      String
+  periodStart  DateTime
+  ingressBytes BigInt   @default(0)
+  egressBytes  BigInt   @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@unique([ownerId, periodStart])
+  @@index([ownerId, periodStart])
+}
+
+enum DomainKind {
+  TUNIQ_SUBDOMAIN
+  CUSTOM
+}
+
+enum VerifyStatus {
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+enum SessionStatus {
+  STARTING
+  ONLINE
+  OFFLINE
+  FAILED
+}

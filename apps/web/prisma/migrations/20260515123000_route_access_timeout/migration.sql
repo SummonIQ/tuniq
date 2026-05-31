@@ -1,0 +1,4 @@
+ALTER TABLE "Route"
+ADD COLUMN "accessTokenHash" TEXT,
+ADD COLUMN "accessTokenHint" TEXT,
+ADD COLUMN "timeoutMs" INTEGER NOT NULL DEFAULT 60000;

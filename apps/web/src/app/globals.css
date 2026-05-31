@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0b1117;
+  --muted: #5b6876;
+  --line: #d9e1e8;
+  --surface: #f7fafc;
+  --card: #ffffff;
+  --card-muted: #eef4f7;
+  --accent: #0f766e;
+  --on-accent: #ffffff;
+  --positive: #047857;
+  --positive-bg: #ecfdf5;
+  --danger: #b42318;
+  --danger-bg: #fff1f0;
+  --warning: #8a4b0f;
+  --warning-bg: #fff7ed;
+}
+
+:root[data-theme="dark"] {
+  --background: #0b1117;
+  --foreground: #f4f7fb;
+  --muted: #9aa8b6;
+  --line: #263341;
+  --surface: #111923;
+  --card: #151f2a;
+  --card-muted: #1c2936;
+  --accent: #2dd4bf;
+  --on-accent: #052925;
+  --positive: #6ee7b7;
+  --positive-bg: #0b2a22;
+  --danger: #fca5a5;
+  --danger-bg: #331515;
+  --warning: #fdba74;
+  --warning-bg: #331d0b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-muted: var(--card-muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-positive: var(--positive);
+  --color-positive-bg: var(--positive-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+@keyframes tuniq-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tuniq-packet {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scaleX(0.4);
+  }
+  12% {
+    opacity: 1;
+  }
+  48% {
+    transform: translate3d(250px, 64px, 0) scaleX(1);
+  }
+  76% {
+    opacity: 1;
+    transform: translate3d(460px, 150px, 0) scaleX(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(520px, 188px, 0) scaleX(0.3);
+  }
+}
+
+@keyframes tuniq-transfer {
+  0% {
+    opacity: 0.25;
+    transform: translateX(-72%) scaleX(0.35);
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(24%) scaleX(1);
+  }
+  100% {
+    opacity: 0.25;
+    transform: translateX(124%) scaleX(0.35);
+  }
+}
+
+@keyframes tuniq-flow {
+  0% {
+    opacity: 0;
+    transform: translateX(-130%);
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(330%);
+  }
+}
